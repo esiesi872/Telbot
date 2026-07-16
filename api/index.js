@@ -3,7 +3,7 @@ import { Bot } from 'grammy';
 const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command('start', async (ctx) => {
-  await ctx.reply(`✅ ربات با موفقیت کار می‌کند!
+  await ctx.reply(`✅ ربات آنلاین است!
 
 سلام! 👋
 دو عدد بفرست مثل: 12 5`);
@@ -21,29 +21,29 @@ bot.on('message:text', async (ctx) => {
     let div = b !== 0 ? (a / b).toFixed(4) : '⚠️ تقسیم بر صفر ممکن نیست!';
     
     await ctx.reply(`
-🔢 محاسبات:
+🔢 محاسبات برای ${a} و ${b}:
 
-${a} + ${b} = ${sum}
-میانگین = ${avg}
-${a} × ${b} = ${mul}
-${a} ÷ ${b} = ${div}
+➕ جمع: ${sum}
+📊 میانگین: ${avg}
+✖️ ضرب: ${mul}
+➗ تقسیم: ${div}
     `.trim());
   } else {
-    await ctx.reply('❌ لطفاً دو عدد وارد کن.\nمثال: 15 3');
+    await ctx.reply('❌ دو عدد وارد کن.\nمثال: 15 3');
   }
 });
 
-// برای Vercel (Node.js runtime)
-export default async function handler(req) {
+export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const body = await req.json();
+      const body = req.body;
       await bot.handleUpdate(body);
-      return new Response('OK', { status: 200 });
+      res.status(200).json({ ok: true });
     } catch (error) {
-      console.error('Error:', error);
-      return new Response('Error', { status: 500 });
+      console.error(error);
+      res.status(500).json({ error: 'Internal error' });
     }
+  } else {
+    res.status(200).json({ ok: true });
   }
-  return new Response('OK', { status: 200 });
 }
