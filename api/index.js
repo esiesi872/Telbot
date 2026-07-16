@@ -3,7 +3,7 @@ import { Bot } from 'grammy';
 const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command('start', async (ctx) => {
-  await ctx.reply(`✅ ربات آنلاین است!
+  await ctx.reply(`✅ ربات با موفقیت کار می‌کند!
 
 سلام! 👋
 دو عدد بفرست مثل: 12 5`);
@@ -33,17 +33,21 @@ bot.on('message:text', async (ctx) => {
   }
 });
 
+// Handler استاندارد Vercel
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const body = req.body;
+      let body = req.body;
+      if (typeof body === 'string') {
+        body = JSON.parse(body);
+      }
       await bot.handleUpdate(body);
-      res.status(200).json({ ok: true });
+      res.status(200).send('OK');
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal error' });
+      console.error('Error:', error);
+      res.status(500).send('Error');
     }
   } else {
-    res.status(200).json({ ok: true });
+    res.status(200).send('OK');
   }
 }
