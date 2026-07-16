@@ -3,7 +3,7 @@ import { Bot } from 'grammy';
 const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command('start', async (ctx) => {
-  await ctx.reply(`✅ ربات آنلاین است!
+  await ctx.reply(`✅ ربات با موفقیت کار می‌کند!
 
 سلام! 👋
 دو عدد بفرست مثل: 12 5`);
@@ -21,28 +21,29 @@ bot.on('message:text', async (ctx) => {
     let div = b !== 0 ? (a / b).toFixed(4) : '⚠️ تقسیم بر صفر ممکن نیست!';
     
     await ctx.reply(`
-🔢 محاسبات برای ${a} و ${b}:
+🔢 محاسبات:
 
-➕ جمع: ${sum}
-📊 میانگین: ${avg}
-✖️ ضرب: ${mul}
-➗ تقسیم: ${div}
+${a} + ${b} = ${sum}
+میانگین = ${avg}
+${a} × ${b} = ${mul}
+${a} ÷ ${b} = ${div}
     `.trim());
   } else {
-    await ctx.reply('❌ دو عدد وارد کن.\nمثال: 15 3');
+    await ctx.reply('❌ لطفاً دو عدد وارد کن.\nمثال: 15 3');
   }
 });
 
-// Handler مخصوص Vercel
-export const config = { runtime: 'edge' };
-
+// برای Vercel (Node.js runtime)
 export default async function handler(req) {
-  try {
-    const body = await req.json();
-    await bot.handleUpdate(body);
-    return new Response('OK', { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return new Response('Error', { status: 500 });
+  if (req.method === 'POST') {
+    try {
+      const body = await req.json();
+      await bot.handleUpdate(body);
+      return new Response('OK', { status: 200 });
+    } catch (error) {
+      console.error('Error:', error);
+      return new Response('Error', { status: 500 });
+    }
   }
+  return new Response('OK', { status: 200 });
 }
