@@ -1,6 +1,6 @@
-import { Bot } from 'grammy';
+import { Bot, webhookCallback } from 'grammy';
 
-const bot = new Bot(process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE');
+const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command('start', (ctx) => {
   ctx.reply('سلام! دو عدد رو به صورت "عدد1 عدد2" بفرست، مثلاً: 10 5');
@@ -33,5 +33,5 @@ bot.on('message:text', async (ctx) => {
   }
 });
 
-bot.start();
-console.log('ربات شروع شد!');
+// برای Vercel مهم است
+export default webhookCallback(bot, 'express');
