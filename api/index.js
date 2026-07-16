@@ -3,7 +3,7 @@ import { Bot } from 'grammy';
 const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.command('start', async (ctx) => {
-  await ctx.reply(`✅ ربات با موفقیت کار می‌کند!
+  await ctx.reply(`✅ ربات آماده است!
 
 سلام! 👋
 دو عدد بفرست مثل: 12 5`);
@@ -21,22 +21,25 @@ bot.on('message:text', async (ctx) => {
     let div = b !== 0 ? (a / b).toFixed(4) : '⚠️ تقسیم بر صفر ممکن نیست!';
     
     await ctx.reply(`
-🔢 محاسبات برای ${a} و ${b}:
+🔢 محاسبات:
 
-➕ جمع: ${sum}
-📊 میانگین: ${avg}
-✖️ ضرب: ${mul}
-➗ تقسیم: ${div}
+${a} + ${b} = ${sum}
+میانگین = ${avg}
+${a} × ${b} = ${mul}
+${a} ÷ ${b} = ${div}
     `.trim());
   } else {
     await ctx.reply('❌ دو عدد وارد کن.\nمثال: 15 3');
   }
 });
 
-// Handler استاندارد Vercel
+// Handler برای Vercel
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
+      // Initialize bot
+      await bot.init();
+      
       let body = req.body;
       if (typeof body === 'string') {
         body = JSON.parse(body);
